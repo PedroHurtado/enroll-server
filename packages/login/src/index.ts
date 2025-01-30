@@ -1,5 +1,5 @@
 import express from 'express';
-import {registerFeatures} from '@enroll-server/common';
+import {registerFeatures} from '@enroll-server/common'
 const app = express();
 const PORT = process.env.PORT || 3000;
 
