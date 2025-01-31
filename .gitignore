@@ -1,3 +1,5 @@
+*.tsbuildinfo
+tsconfig.tsbuildinfo
 # Ignorar node_modules en todos los paquetes y en la raíz
 node_modules/
 
