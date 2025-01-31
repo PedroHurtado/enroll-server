@@ -1,9 +1,8 @@
+// tsconfig.base.json (raíz)
 {
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -12,9 +11,9 @@
     "isolatedModules": true,
     "baseUrl": "./",
     "composite": true,
-    "declaration": true,    
+    "declaration": true,
     "paths": {
       "@enroll-server/common": ["packages/common/src"]
-    },
+    }
   }
 }
