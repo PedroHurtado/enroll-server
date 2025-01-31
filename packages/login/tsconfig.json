@@ -9,6 +9,9 @@
   ],
   "exclude": [
     "src/node_modules"
+  ],
+  "references": [
+    { "path": "../common" }  
   ]
 }
 
