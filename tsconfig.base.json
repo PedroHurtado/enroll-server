@@ -11,10 +11,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": "./",
+    "composite": true,
+    "declaration": true,    
     "paths": {
-      "@enroll-server/common": [
-       "packages/common/src"
-      ]
-    }
+      "@enroll-server/common": ["packages/common/src"]
+    },
   }
 }

@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./"  // Cambia esto a la raíz del paquete "server"
+    "rootDir": "./src"  
   },
   "include": [
     "src/**/*"
