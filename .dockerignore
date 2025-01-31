@@ -1,14 +1,8 @@
-# Ignorar dependencias locales
-node_modules
-.pnpm-store
-
-# Caché y builds
-dist
-out
-*.log
-coverage
-
-# Git y configuración de entorno
-.git
-.gitignore
-.env
+# Añade estas líneas
+**/node_modules
+**/.git
+**/.pnpm-store
+**/tsconfig.tsbuildinfo
+**/*.log
+**/dist
+**/mongo_data

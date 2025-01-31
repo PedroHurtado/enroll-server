@@ -1,35 +1,42 @@
-# Usa Node 20 en Alpine
+# Etapa 1: Builder
 FROM node:20-alpine AS builder
 
-# Activa PNPM
+# Configura variables de entorno de pnpm
+ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia solo package.json y pnpm-lock.yaml
+# Copia solo los archivos necesarios para instalar dependencias
 COPY package.json pnpm-lock.yaml ./
 
-# Fuerza una instalación sin symlinks
-RUN pnpm install --frozen-lockfile --shamefully-hoist --no-verify-store-integrity
+# Instala dependencias con cache dedicada
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --shamefully-hoist
 
-# Copia el resto del código fuente
+# Copia el resto de los archivos
 COPY . .
 
-# Compila si es necesario
+# Build de producción
 RUN pnpm build
 
-# Usa una imagen más ligera para producción
+# Etapa 2: Runtime
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Copia solo lo necesario
+# Copia solo lo necesario para producción
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Expone el puerto
-EXPOSE 3000
+# Configura usuario no-root
+RUN chown -R node:node /app
+USER node
 
-# Comando de inicio
+# Salud del contenedor
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD node -e "require('http').get('http://localhost:3000/health')"
+
+EXPOSE 3000
 CMD ["node", "dist/index.js"]
