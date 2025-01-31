@@ -1,0 +1,14 @@
+# Ignorar dependencias locales
+node_modules
+.pnpm-store
+
+# Caché y builds
+dist
+out
+*.log
+coverage
+
+# Git y configuración de entorno
+.git
+.gitignore
+.env
