@@ -1,42 +1,38 @@
-# Etapa 1: Builder
 FROM node:20-alpine AS builder
-
-# Configura variables de entorno de pnpm
-ENV PNPM_HOME=/pnpm
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 WORKDIR /app
 
-# Copia solo los archivos necesarios para instalar dependencias
-COPY package.json pnpm-lock.yaml ./
+# Copiar archivos de configuración del monorepo
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
 
-# Instala dependencias con cache dedicada
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --shamefully-hoist
+# Instalar PNPM a nivel global
+RUN npm install -g pnpm
 
-# Copia el resto de los archivos
-COPY . .
+# Copiar todos los archivos de los paquetes
+COPY packages/common/ ./packages/common/
+COPY packages/login/ ./packages/login/
 
-# Build de producción
-RUN pnpm build
+# Instalar dependencias sin modificar lockfile
+RUN pnpm install --frozen-lockfile
 
-# Etapa 2: Runtime
+# Construir el proyecto
+RUN pnpm run build
+
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Copia solo lo necesario para producción
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copiar package.json y pnpm files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY --from=builder /app/packages/common/package.json ./packages/common/package.json
+COPY --from=builder /app/packages/login/package.json ./packages/login/package.json
 
-# Configura usuario no-root
-RUN chown -R node:node /app
-USER node
+# Copiar los archivos compilados
+COPY --from=builder /app/packages/common/dist ./packages/common/dist
+COPY --from=builder /app/packages/login/dist ./packages/login/dist
 
-# Salud del contenedor
-HEALTHCHECK --interval=30s --timeout=3s \
-  CMD node -e "require('http').get('http://localhost:3000/health')"
+# Instalar solo las dependencias de producción
+RUN npm install -g pnpm && pnpm install --prod --frozen-lockfile
 
+# Exponer el puerto 3000
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+
+CMD ["node", "packages/login/dist/index.js"]
