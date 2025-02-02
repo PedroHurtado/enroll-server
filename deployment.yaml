@@ -14,6 +14,7 @@ spec:
     spec:
       containers:
       - name: mi-aplicacion
+        imagePullPolicy: Never
         image: login-service:latest  # Reemplaza con la imagen correcta
         ports:
         - containerPort: 3000
@@ -27,6 +28,7 @@ spec:
     app: mi-aplicacion
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 3000
-  type: LoadBalancer  # Si usas un balanceador de carga, o usa 'ClusterIP' para acceso interno
+      port: 3000       
+      targetPort: 3000 
+      nodePort: 30000   
+  type: NodePort  # Si usas un balanceador de carga, o usa 'ClusterIP' para acceso interno
