@@ -22,32 +22,11 @@ const mainConfig = {
     }),
     commonjs(),
     typescript({
-      tsconfig: './tsconfig.json',      
+      tsconfig: './tsconfig.json',       
     })
   ]
 };
 
-// Configuración específica para generar los tipos
-const dtsConfig = {
-  input: 'src/index.ts',
-  output: {
-    dir: 'dist/types',
-    format: 'es',
-      },
-  plugins: [
-    resolve({
-      extensions: ['.ts', '.d.ts']
-    }),
-    dts({
-      tsconfig: './tsconfig.json',
-      compilerOptions: {
-        baseUrl: ".",
-        paths: {
-          "@enroll-server/common": ["src"]
-        }
-      }
-    })
-  ]
-};
 
-export default [mainConfig, dtsConfig];
+
+export default [mainConfig];
