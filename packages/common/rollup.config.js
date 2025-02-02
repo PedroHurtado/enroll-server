@@ -48,4 +48,4 @@ const dtsConfig = {
 
 
 
-export default [mainConfig];
+export default [mainConfig,dtsConfig];
