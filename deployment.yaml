@@ -29,6 +29,5 @@ spec:
   ports:
     - protocol: TCP
       port: 3000       
-      targetPort: 3000 
-      nodePort: 30000   
-  type: NodePort  # Si usas un balanceador de carga, o usa 'ClusterIP' para acceso interno
+      targetPort: 3000        
+  type: ClusterIP   # Si usas un balanceador de carga, o usa 'ClusterIP' para acceso interno
