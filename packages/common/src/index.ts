@@ -1,5 +1,5 @@
 export * from './validate'
-export * from './autorize'
+export * from './authorize'
 export * from './registerfeatures'
 export * from './entitybase'
 export * from './repository/repository'

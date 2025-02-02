@@ -1,7 +1,7 @@
 import { Express, Request, Response } from 'express';
 import { User } from '../../../infraestructure/user/user';
 import { IUser } from '../../../domain/user/user';
-import { Add, convertUUID,validate,autorize } from '@enroll-server/common'
+import { Add, convertUUID,validate,authorize } from '@enroll-server/common'
 import { body } from 'express-validator';
 
 
@@ -34,6 +34,6 @@ export default function createUserCommand(app: Express) {
         res.send('User created');
     }
     
-    app.post(path, autorize(), validate(validators), controller);
+    app.post(path, authorize(), validate(validators), controller);
 
 }

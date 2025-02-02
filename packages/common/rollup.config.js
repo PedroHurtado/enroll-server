@@ -9,7 +9,7 @@ const mainConfig = {
   input: 'src/index.ts',
   output: {
     dir: 'dist',
-    format: 'esm',   
+    format: 'esm',
     sourcemap: true,
   },
   external: ['express', 'express-validator', 'glob', 'mongoose'],
@@ -22,11 +22,30 @@ const mainConfig = {
     }),
     commonjs(),
     typescript({
-      tsconfig: './tsconfig.json',       
+      tsconfig: './tsconfig.json',
+      outputToFilesystem: true
+    })
+  ]
+};
+
+const dtsConfig = {
+  input: 'src/index.ts',
+  output: {
+    file: 'dist/index.d.ts',
+    format: 'es'
+  },  
+  plugins: [      
+    dts({
+      tsconfig: './tsconfig.json',      
+      compilerOptions: {
+        composite: false,
+        preserveSymlinks: true
+      },
+      respectExternal: true
     })
   ]
 };
 
 
 
-export default [mainConfig];
+export default [mainConfig, dtsConfig];

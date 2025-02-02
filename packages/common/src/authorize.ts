@@ -1,6 +1,6 @@
 import { Request, Response,NextFunction } from "express";
-export const autorize = (roles:string[]=[])=>{
+export const authorize = (roles:string[]=[])=>{
     return (rea:Request,res:Response,next:NextFunction)=>{
-        next()
+        next();
     }
 }
