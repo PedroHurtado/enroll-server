@@ -10,10 +10,9 @@
     "resolveJsonModule": true,    
     "isolatedModules": true,
     "baseUrl": "./",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "composite": true,      
+    "sourceMap": true,   
+    
     "paths": {
       "@enroll-server/common": ["packages/common/src"]
     }

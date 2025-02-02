@@ -4,7 +4,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
 
-// Configuración principal para el código
 const mainConfig = {
   input: 'src/index.ts',
   output: {
@@ -14,38 +13,31 @@ const mainConfig = {
   },
   external: ['express', 'express-validator', 'glob', 'mongoose'],
   plugins: [
-    del({ targets: ['dist/*'] }),
+    del({ targets: ['dist/*.js', 'dist/*.map'] }), // Evita borrar .d.ts
     resolve({
       extensions: ['.ts', '.js'],
       preferBuiltins: true,
-      dedupe: ['express', 'express-validator', 'glob', 'mongoose']
     }),
     commonjs(),
     typescript({
       tsconfig: './tsconfig.json',
-      outputToFilesystem: true
+      outputToFilesystem: false 
     })
   ]
 };
 
 const dtsConfig = {
-  input: 'src/index.ts',
+  input: 'dist/types/index.d.ts',
   output: {
     file: 'dist/index.d.ts',
-    format: 'es'
-  },  
-  plugins: [      
-    dts({
-      tsconfig: './tsconfig.json',      
-      compilerOptions: {
-        composite: false,
-        preserveSymlinks: true
-      },
-      respectExternal: true
-    })
-  ]
+    format: 'es',
+  },
+  external: ['crypto'], 
+  plugins: [    
+    dts(), 
+    //del({ targets: ['dist/types'], hook: 'closeBundle' })       
+  ],
 };
 
 
-
-export default [mainConfig,dtsConfig];
+export default [mainConfig, dtsConfig];
