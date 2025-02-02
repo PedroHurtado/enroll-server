@@ -12,6 +12,8 @@
     "baseUrl": "./",
     "composite": true,
     "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "paths": {
       "@enroll-server/common": ["packages/common/src"]
     }

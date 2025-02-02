@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-aplicacion
+spec:
+  replicas: 1  # Número de réplicas (puedes ajustarlo según tus necesidades)
+  selector:
+    matchLabels:
+      app: mi-aplicacion
+  template:
+    metadata:
+      labels:
+        app: mi-aplicacion
+    spec:
+      containers:
+      - name: mi-aplicacion
+        image: login-service:latest  # Reemplaza con la imagen correcta
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mi-aplicacion-service
+spec:
+  selector:
+    app: mi-aplicacion
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer  # Si usas un balanceador de carga, o usa 'ClusterIP' para acceso interno
