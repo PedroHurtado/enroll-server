@@ -20,24 +20,10 @@ const mainConfig = {
     }),
     commonjs(),
     typescript({
-      tsconfig: './tsconfig.json',
-      outputToFilesystem: false 
+      tsconfig: './tsconfig.json'      
     })
   ]
 };
-
-/*const dtsConfig = {
-  input: 'dist/types/index.d.ts',
-  output: {
-    file: 'dist/index.d.ts',
-    format: 'es',
-  },
-  external: ['crypto'], 
-  plugins: [    
-    dts(), 
-    //del({ targets: ['dist/types'], hook: 'closeBundle' })       
-  ],
-};*/
 
 
 export default [mainConfig];

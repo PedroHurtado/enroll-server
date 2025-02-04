@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter common run build && rollup -c",
-    "start": "node dist/index.js",
+    "start": "node .",
+    "build": "pnpm --filter common run build && rollup -c",    
     "dev": "run-p watch:*",
     "watch:common": "pnpm --filter common run watch",
     "watch:server": "tsx watch src/index.ts",
