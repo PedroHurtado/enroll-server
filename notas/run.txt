@@ -1,0 +1,5 @@
+pnpm --filter <package-name> run build
+pnpm --filter <package-name> start
+docker build -t <package-name>-service -f packages/<package-name>/Dockerfile .
+docker run -d --name <package-name> -p 3000:3000 <package-name>-services && docker logs -f <package-name>
+
