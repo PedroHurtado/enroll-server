@@ -1,12 +1,18 @@
-import express, {Request,Response} from 'express';
+import express from 'express';
 import { registerFeatures } from '@enroll-server/common'
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-})
-registerFeatures(app);
+async function init(){
+  try{
+    await registerFeatures(app)
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  }
+  catch(err){
+    console.error('❌ Error al registrar características:', err);
+  }
+}
+init()
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+

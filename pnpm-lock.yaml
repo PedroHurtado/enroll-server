@@ -100,6 +100,21 @@ importers:
         specifier: ^8.9.5
         version: 8.9.5
     devDependencies:
+      '@rollup/plugin-alias':
+        specifier: ^5.1.1
+        version: 5.1.1(rollup@4.34.0)
+      '@rollup/plugin-commonjs':
+        specifier: ^28.0.2
+        version: 28.0.2(rollup@4.34.0)
+      '@rollup/plugin-json':
+        specifier: ^6.1.0
+        version: 6.1.0(rollup@4.34.0)
+      '@rollup/plugin-node-resolve':
+        specifier: ^16.0.0
+        version: 16.0.0(rollup@4.34.0)
+      '@rollup/plugin-typescript':
+        specifier: ^12.1.2
+        version: 12.1.2(rollup@4.34.0)(tslib@2.8.1)(typescript@5.7.3)
       '@types/body-parser':
         specifier: ^1.19.2
         version: 1.19.5
@@ -107,14 +122,29 @@ importers:
         specifier: ^2.8.16
         version: 2.8.17
       '@types/express':
-        specifier: ^4.17.17
+        specifier: ^4.17.21
         version: 4.17.21
+      '@types/express-validator':
+        specifier: ^3.0.2
+        version: 3.0.2
       '@types/glob':
         specifier: ^8.1.0
         version: 8.1.0
+      '@types/mongoose':
+        specifier: ^5.11.97
+        version: 5.11.97
       '@types/node':
-        specifier: ^20.11.19
+        specifier: ^20.0.0
         version: 20.17.16
+      rollup:
+        specifier: ^4.34.0
+        version: 4.34.0
+      rollup-plugin-delete:
+        specifier: ^2.1.0
+        version: 2.1.0(rollup@4.34.0)
+      rollup-plugin-dts:
+        specifier: ^6.1.1
+        version: 6.1.1(rollup@4.34.0)(typescript@5.7.3)
       tsx:
         specifier: ^4.19.2
         version: 4.19.2
@@ -309,11 +339,29 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
+  '@rollup/plugin-alias@5.1.1':
+    resolution: {integrity: sha512-PR9zDb+rOzkRb2VD+EuKB7UC41vU5DIwZ5qqCpk0KJudcWAyi8rvYOhS7+L5aZCspw1stTViLgN5v6FF1p5cgQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
   '@rollup/plugin-commonjs@28.0.2':
     resolution: {integrity: sha512-BEFI2EDqzl+vA1rl97IDRZ61AIwGH093d9nz8+dThxJNH8oSoB7MjWvPCX3dkaK1/RCJ/1v/R1XB15FuSs0fQw==}
     engines: {node: '>=16.0.0 || 14 >= 14.17'}
     peerDependencies:
       rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/plugin-json@6.1.0':
+    resolution: {integrity: sha512-EGI2te5ENk1coGeADSIwZ7G2Q8CJS2sF120T7jLw4xFw9n7wIOXHo+kIYRAoVpJAN+kmqZSoO3Fp4JtoNF4ReA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
     peerDependenciesMeta:
       rollup:
         optional: true
@@ -1823,6 +1871,10 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.0
 
+  '@rollup/plugin-alias@5.1.1(rollup@4.34.0)':
+    optionalDependencies:
+      rollup: 4.34.0
+
   '@rollup/plugin-commonjs@28.0.2(rollup@4.34.0)':
     dependencies:
       '@rollup/pluginutils': 5.1.4(rollup@4.34.0)
@@ -1832,6 +1884,12 @@ snapshots:
       is-reference: 1.2.1
       magic-string: 0.30.17
       picomatch: 4.0.2
+    optionalDependencies:
+      rollup: 4.34.0
+
+  '@rollup/plugin-json@6.1.0(rollup@4.34.0)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.4(rollup@4.34.0)
     optionalDependencies:
       rollup: 4.34.0
 

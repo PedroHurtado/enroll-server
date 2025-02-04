@@ -5,7 +5,7 @@ import { Add, convertUUID,validate,authorize } from '@enroll-server/common'
 import { body } from 'express-validator';
 
 
-export default function createUserCommand(app: Express) { 
+export default function create(app: Express) { 
 
     /*
         * - `req.body`

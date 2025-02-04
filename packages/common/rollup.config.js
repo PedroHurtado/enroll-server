@@ -26,7 +26,7 @@ const mainConfig = {
   ]
 };
 
-const dtsConfig = {
+/*const dtsConfig = {
   input: 'dist/types/index.d.ts',
   output: {
     file: 'dist/index.d.ts',
@@ -37,7 +37,7 @@ const dtsConfig = {
     dts(), 
     //del({ targets: ['dist/types'], hook: 'closeBundle' })       
   ],
-};
+};*/
 
 
-export default [mainConfig, dtsConfig];
+export default [mainConfig];
