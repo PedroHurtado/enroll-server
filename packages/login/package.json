@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node .",
-    "build": "pnpm --filter common run build && rollup -c",    
+    "build": "pnpm --filter common run build && rollup -c",
     "dev": "run-p watch:*",
     "watch:common": "pnpm --filter common run watch",
     "watch:server": "tsx watch src/index.ts",
@@ -40,6 +40,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.0.0",
     "rollup": "^4.34.0",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-delete": "^2.1.0",
     "rollup-plugin-dts": "^6.1.1",
     "tsx": "^4.19.2",

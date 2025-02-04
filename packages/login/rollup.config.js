@@ -8,6 +8,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import del from 'rollup-plugin-delete';
 import { globSync } from 'glob';
+import copy from 'rollup-plugin-copy';
 
 // Leer package.json para obtener dependencias externas
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
@@ -43,7 +44,27 @@ export default [
       typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve(),
       commonjs(),
-      json()
+      json(),
+      copy({
+        targets: [
+          {
+            src: 'package.json',
+            dest: 'dist',
+            transform: (contents) => {
+              const packageJson = JSON.parse(contents.toString());
+              // Excluir @enroll-server/common de dependencies
+              packageJson.dependencies = Object.fromEntries(
+                Object.entries(packageJson.dependencies || {}).filter(([key]) => key !== '@enroll-server/common')
+              );
+              // Eliminar devDependencies y scripts
+              delete packageJson.devDependencies;
+              delete packageJson.scripts;
+              packageJson.main = 'index.js';
+              return JSON.stringify(packageJson, null, 2);
+            }
+          }
+        ]
+      })
     ]
   },
   // Configuración para los bundles de cada feature

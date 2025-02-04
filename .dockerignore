@@ -1,8 +1,6 @@
-# Añade estas líneas
 **/node_modules
 **/.git
 **/.pnpm-store
 **/tsconfig.tsbuildinfo
 **/*.log
-**/dist
 **/mongo_data
