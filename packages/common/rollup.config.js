@@ -1,8 +1,12 @@
+import fs from 'fs';
+
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
-import dts from 'rollup-plugin-dts';
+
+const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+const external = Object.keys(packageJson.dependencies || {})
 
 const mainConfig = {
   input: 'src/index.ts',
@@ -11,7 +15,7 @@ const mainConfig = {
     format: 'esm',
     sourcemap: true,
   },
-  external: ['express', 'express-validator', 'glob', 'mongoose'],
+  external,
   plugins: [
     del({ targets: ['dist/*.js', 'dist/*.map'] }), // Evita borrar .d.ts
     resolve({
