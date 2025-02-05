@@ -12,7 +12,7 @@ import { body, ContextRunner } from 'express-validator';
 export default function create(app: Express, logger: Logger) {
    
 
-    const path = '/user';
+    const path = '/login';
 
     const validators:ContextRunner[] = [        
     ]
