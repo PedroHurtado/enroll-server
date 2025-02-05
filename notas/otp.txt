@@ -1,0 +1,66 @@
+interface OTPData {
+  otp: string;
+  createdAt: number;
+  expiresAt: number;
+}
+
+class BrowserOTPGenerator {
+  private readonly defaultLength: number = 6;
+  private readonly defaultExpiryTime: number = 300; // 5 minutes in seconds
+
+  /**
+   * Generates a secure OTP using the Web Crypto API
+   * @param length Number of digits in OTP (default: 6)
+   * @param expiryTime Time until OTP expires in seconds (default: 300)
+   * @returns OTPData object containing the OTP and timing information
+   */
+  public generateOTP(length: number = this.defaultLength, expiryTime: number = this.defaultExpiryTime): OTPData {
+    if (length < 1) throw new Error('OTP length must be positive');
+    if (expiryTime < 1) throw new Error('Expiry time must be positive');
+
+    const maxValue: number = Math.pow(10, length) - 1;
+    const minValue: number = Math.pow(10, length - 1);
+    const range: number = maxValue - minValue + 1;
+
+    // Generate random number using Web Crypto API
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const randomNumber = array[0];
+    const otp = (randomNumber % range) + minValue;
+
+    const currentTime: number = Math.floor(Date.now() / 1000);
+
+    return {
+      otp: otp.toString().padStart(length, '0'),
+      createdAt: currentTime,
+      expiresAt: currentTime + expiryTime
+    };
+  }
+
+  /**
+   * Verifies if the provided OTP is valid and not expired
+   * @param storedOTPData Previously generated OTP data
+   * @param inputOTP OTP to verify
+   * @returns boolean indicating if OTP is valid
+   */
+  public verifyOTP(storedOTPData: OTPData, inputOTP: string): boolean {
+    const currentTime: number = Math.floor(Date.now() / 1000);
+    return currentTime <= storedOTPData.expiresAt && inputOTP === storedOTPData.otp;
+  }
+
+  /**
+   * Returns remaining time in seconds before OTP expires
+   * @param otpData OTP data to check
+   * @returns number of seconds remaining, or 0 if expired
+   */
+  public getRemainingTime(otpData: OTPData): number {
+    const currentTime: number = Math.floor(Date.now() / 1000);
+    return Math.max(0, otpData.expiresAt - currentTime);
+  }
+}
+
+const generateOTP = new BrowserOTPGenerator
+const result = generateOTP.generateOTP()
+console.log(result)
+const correct = generateOTP.verifyOTP(result, result.otp)
+console.log(correct)

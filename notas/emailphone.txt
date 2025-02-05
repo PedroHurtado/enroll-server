@@ -1,0 +1,67 @@
+type ValidationType = 'email' | 'phone' | 'unknown';
+
+class InputValidator {
+  /**
+   * Detects if a string is an email or phone number
+   * @param input String to validate
+   * @returns ValidationType ('email', 'phone', or 'unknown')
+   */
+  public static detectInputType(input: string): ValidationType {
+    if (!input) return 'unknown';
+    
+    if (InputValidator.isEmail(input)) return 'email';
+    if (InputValidator.isPhone(input)) return 'phone';
+    
+    return 'unknown';
+  }
+
+  /**
+   * Validates if string matches email pattern
+   * Allows for international characters in local part
+   * Requires TLD in domain part
+   */
+  private static isEmail(input: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(input);
+  }
+
+  /**
+   * Validates if string matches phone pattern
+   * Accepts formats:
+   * - International: +XX XXXXXXXXX
+   * - National: (XXX) XXX-XXXX
+   * - Simple: XXXXXXXXXX
+   * Allows spaces, dashes, parentheses
+   */
+  private static isPhone(input: string): boolean {
+    // Primero limpiamos el input de espacios y caracteres especiales
+    const cleanInput = input.replace(/[\s\-\(\)]/g, '');
+    
+    // Patrones de teléfono comunes
+    const patterns = [
+      /^\+?[1-9]\d{1,14}$/, // Formato internacional (E.164)
+      /^[0-9]{10}$/, // Formato simple de 10 dígitos
+      /^\+[1-9][0-9]{1,2}[0-9]{6,12}$/ // Formato internacional con código de país
+    ];
+
+    return patterns.some(pattern => pattern.test(cleanInput));
+  }
+
+  /**
+   * Gets detailed information about the input
+   * @param input String to analyze
+   * @returns Object with validation details
+   */
+  public static getInputInfo(input: string) {
+    const type = this.detectInputType(input);
+    return {
+      type,
+      isValid: type !== 'unknown',
+      originalInput: input,
+      cleanInput: input.trim().toLowerCase(),
+    };
+  }
+}
+
+const result = InputValidator.getInputInfo("616647015")
+console.log(result)
