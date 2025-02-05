@@ -4,3 +4,5 @@ docker build -t <package-name>-service -f packages/<package-name>/Dockerfile .
 docker run --name <package-name> -p <local-port>:3000 <package-name>-service
 docker stop <package-name>
 docker rm <package-name>
+
+degit pedrohurtado/packagetemplate ./packages/<package-name>
