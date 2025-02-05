@@ -24,7 +24,8 @@ const mainConfig = {
     }),
     commonjs(),
     typescript({
-      tsconfig: './tsconfig.json'      
+      tsconfig: './tsconfig.json',
+      outputToFilesystem: false      
     })
   ]
 };

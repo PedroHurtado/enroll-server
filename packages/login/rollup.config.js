@@ -41,7 +41,7 @@ export default [
         ]
       }),
       del({ targets: 'dist/*' }),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ tsconfig: './tsconfig.json', outputToFilesystem: false }),
       nodeResolve(),
       commonjs(),
       json(),
