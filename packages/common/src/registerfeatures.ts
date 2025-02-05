@@ -5,22 +5,28 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname } from 'path';
 import { Logger } from 'pino';
 
-export async function registerFeatures(app:Express, logger: Logger) {
+export async function registerFeatures(app: Express, logger: Logger) {
     try {
-        const currentFilePath = fileURLToPath(import.meta.url);
-        const currentDir = dirname(currentFilePath);
-        const featuresPath = path.join(currentDir, 'features');
-
+        // Usamos SERVICE_PATH si está definido, si no, usamos la ruta calculada
+        const basePath = process.env.SERVICE_PATH || dirname(fileURLToPath(import.meta.url));
+        const featuresPath = process.env.NODE_ENV === 'development' 
+            ? path.join(basePath, 'src', 'features')
+            : path.join(basePath, 'features');
+        
+        console.log(`🔍 Entorno: ${process.env.NODE_ENV}`);
         console.log(`🔍 Buscando archivos en: ${featuresPath}`);
-
-        const files = await glob(`${featuresPath}/**/*.js`, {
+        
+        const files = await glob(`${featuresPath}/**/*.{js,ts}`, {
             ignore: ['**/*.test.*', '**/*.spec.*', '**/*.d.ts']
-        });        
+        });
+        
+        
         console.log(`📂 Archivos encontrados:`, files);
-
+        
         for (const file of files) {
             try {
                 const fileUrl = pathToFileURL(file).href;
+                console.log(`🔗 Intentando importar: ${fileUrl}`);
                 const feature = await import(fileUrl);
                 if (typeof feature.default === 'function') {
                     await feature.default(app, logger);
@@ -35,4 +41,4 @@ export async function registerFeatures(app:Express, logger: Logger) {
     } catch (error) {
         throw error;
     }
-}
+ }

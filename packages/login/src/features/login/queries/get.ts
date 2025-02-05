@@ -6,8 +6,9 @@ export default function get(app: Express, logger:Logger) {
   
 
     const path='/'
+    
     const validators:ContextRunner[] = []
-
+    
     class Service{
         @Connection('connection')
         @Log(logger)
@@ -17,9 +18,8 @@ export default function get(app: Express, logger:Logger) {
     }
     const controller = async (req: Request, res: Response) => {
         await Service.handler();
-        res.send('User created');
-    }
-
-    app.get(path, authorize,validate(validators), controller);
+        res.send('User get');
+    }    
+    app.get(path, authorize(), validate(validators), controller);
 
 }
