@@ -4,7 +4,7 @@ import { registerFeatures } from '@enroll-server/common'
 import { loggerApp } from '@enroll-server/common';
 
 
-const {httpLogger} = loggerApp('http://localhost:9200');
+const {httpLogger,logger} = loggerApp('http://localhost:9200');
 
 const corsOptions = {
   origin: "*",
@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 3000;
 
 async function init(){
   try{
-    await registerFeatures(app)
+    await registerFeatures(app,logger)
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });

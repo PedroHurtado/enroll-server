@@ -1,11 +1,12 @@
 import { Express, Request, Response } from 'express';
+import {Logger} from 'pino'
 import { User } from '../../../infraestructure/user/user';
 import { IUser } from '../../../domain/user/user';
 import { Add, convertUUID,validate,authorize } from '@enroll-server/common'
 import { body } from 'express-validator';
 
 
-export default function create(app: Express) { 
+export default function create(app: Express, logger:Logger) { 
 
     /*
         * - `req.body`
