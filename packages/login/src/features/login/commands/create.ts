@@ -6,7 +6,7 @@ import {
     LoggerDecorator,
     DataBaseDecorator
 } from '@enroll-server/common'
-import { body } from 'express-validator';
+import { body, ContextRunner } from 'express-validator';
 
 
 export default function create(app: Express, logger: Logger) {
@@ -21,14 +21,14 @@ export default function create(app: Express, logger: Logger) {
 
     const path = '/user';
 
-    const validators = [
+    const validators:ContextRunner[] = [
         body('').notEmpty().withMessage('')
     ]
 
     class Service {
         @DataBaseDecorator('connection')
         @LoggerDecorator(logger)
-        static async handler() {  // Aquí añadimos static
+        static async handler() {  
             console.log('Ejecutando handler...');
         }
     }
