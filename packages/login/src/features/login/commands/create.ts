@@ -3,21 +3,14 @@ import { Logger } from 'pino'
 import {
     validate,
     authorize,
-    LoggerDecorator,
-    DataBaseDecorator
+    Log,
+    Connection
 } from '@enroll-server/common'
 import { body, ContextRunner } from 'express-validator';
 
 
 export default function create(app: Express, logger: Logger) {
-
-    /*
-        * - `req.body`
-        * - `req.cookies`
-        * - `req.headers`
-        * - `req.params`
-        * - `req.query`
-    */
+   
 
     const path = '/user';
 
@@ -26,8 +19,8 @@ export default function create(app: Express, logger: Logger) {
     ]
 
     class Service {
-        @DataBaseDecorator('connection')
-        @LoggerDecorator(logger)
+        @Connection('connection')
+        @Log(logger)
         static async handler() {  
             console.log('Ejecutando handler...');
         }

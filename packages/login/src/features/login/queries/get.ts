@@ -1,15 +1,16 @@
 import { Express,Request,Response } from "express";
 import { Logger } from "pino";
-import { authorize, DataBaseDecorator,LoggerDecorator, validate } from "@enroll-server/common";
+import { authorize, Log,Connection, validate } from "@enroll-server/common";
 import { ContextRunner } from "express-validator";
 export default function get(app: Express, logger:Logger) { 
   
 
+    const path='/'
     const validators:ContextRunner[] = []
 
     class Service{
-        @DataBaseDecorator('connection')
-        @LoggerDecorator(logger)
+        @Connection('connection')
+        @Log(logger)
         static async handler(){
             console.log('Ejecutando handler...');
         }
@@ -19,6 +20,6 @@ export default function get(app: Express, logger:Logger) {
         res.send('User created');
     }
 
-    app.get('/', authorize,validate(validators), controller);
+    app.get(path, authorize,validate(validators), controller);
 
 }
