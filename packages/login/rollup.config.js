@@ -82,7 +82,7 @@ export default [
           { find: '@enroll-server/common', replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../common/dist') }
         ]
       }),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ tsconfig: './tsconfig.json', outputToFilesystem: false }),
       nodeResolve(),
       commonjs(),
       json()
