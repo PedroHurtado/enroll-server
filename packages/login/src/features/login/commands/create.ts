@@ -14,8 +14,7 @@ export default function create(app: Express, logger: Logger) {
 
     const path = '/user';
 
-    const validators:ContextRunner[] = [
-        body('').notEmpty().withMessage('')
+    const validators:ContextRunner[] = [        
     ]
 
     class Service {
