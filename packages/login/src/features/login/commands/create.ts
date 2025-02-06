@@ -29,9 +29,9 @@ export default function create(app: Express, logger: Logger) {
     ]
 
     class Service {
-        @Connection('connection')
-        @Log(logger)
-        static async handler(request: IRequest): Promise<any> {
+        @Connection<IResponse>('connection')
+        @Log<IResponse>(logger)
+        static async handler(request: IRequest): Promise<IResponse> {
             const result = OTPGenerator.generateOTP()
             const otp: IOtp = {
                 id: crypto.randomUUID(),
