@@ -8,7 +8,7 @@ import {
 } from '@enroll-server/common'
 
 import { body, ContextRunner } from 'express-validator';
-import { OTPGenerator } from '../../../domain/user/otpService';
+import { OTPGenerator } from '../../../domain/user/otpservice';
 import { setOtp } from '../../../infraestructure/user/otpsession';
 import { IOtp } from 'packages/login/src/domain/user/otp';
 
