@@ -6,16 +6,20 @@ declare module "express" {
         tenantId?: string;
     }
 }
+
+export const redis = new Redis("redis://localhost:6379");
+
+const gracefulShutdown = async () => {
+    console.log("Cerrando conexión con Redis...");
+    await redis.quit();
+    console.log("Conexión con Redis cerrada.");
+    process.exit(0);
+};
+process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
+
+
 export function useRedis() {
-    const redis = new Redis("redis://localhost:6379");
-    const gracefulShutdown = async () => {
-        console.log("Cerrando conexión con Redis...");
-        await redis.quit();
-        console.log("Conexión con Redis cerrada.");
-        process.exit(0);
-    };
-    process.on("SIGINT", gracefulShutdown);
-    process.on("SIGTERM", gracefulShutdown);
 
     return async function (req: Request, res: Response, next: NextFunction) {
         const subdomain = req.hostname.split('.')[0];

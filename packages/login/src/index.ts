@@ -13,11 +13,10 @@ const corsOptions = {
 };
 
 const app = express();
-app.use(useRedis())
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(httpLogger);
-
+app.use(useRedis())
 
 const PORT = process.env.PORT || 3000;
 
