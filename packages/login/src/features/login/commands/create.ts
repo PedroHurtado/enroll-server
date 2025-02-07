@@ -7,10 +7,10 @@ import {
     Connection
 } from '@enroll-server/common'
 
-import { body, ContextRunner } from 'express-validator';
+import { ContextRunner } from 'express-validator';
 import { OTPGenerator } from '../../../domain/user/otpservice';
 import { setOtp } from '../../../infraestructure/user/otpsession';
-import { IOtp } from 'packages/login/src/domain/user/otp';
+import { IOtp } from '../../../domain/user/otp';
 
 export default function create(app: Express, logger: Logger) {
 

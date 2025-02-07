@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from "cors";
-import { registerFeatures, loggerApp, useRedis } from '@enroll-server/common'
+import { registerFeatures, loggerApp, tenat,redis  } from '@enroll-server/common'
 
 
 
@@ -16,7 +16,7 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(httpLogger);
-app.use(useRedis())
+app.use(tenat(redis))
 
 const PORT = process.env.PORT || 3000;
 
