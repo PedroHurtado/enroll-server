@@ -41,16 +41,9 @@ async function getService(serviceName: string) {
 }
 
 /**
- * @description: Function to register a service if it doesn't exist, or return it if it does
+ * @description: Function to register a service if it doesn't exist
  */
 async function registerService(serviceName: string, url: string) {
-    const existingService = await getService(serviceName);
-
-    if (existingService) {
-        console.log(`Service '${serviceName}' already exists. ID: ${existingService.id}`);
-        return existingService;
-    }
-
     return fetchWithErrorHandling(
         `${KONG_ADMIN_URL}/services`,
         {
@@ -63,132 +56,84 @@ async function registerService(serviceName: string, url: string) {
 }
 
 /**
- * @description: Function to get a route by name and service ID
+ * @description: Function to delete all routes for a service
  */
-async function getRoute(serviceId: string, routeName: string) {
+async function deleteAllRoutes(serviceId: string) {
     try {
-        const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/routes/${routeName}`);
+        const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/routes`);
         if (response.ok) {
-            return await response.json();
-        } else if (response.status === 404) {
-            return null;
-        } else {
-            throw new Error(`Error getting route '${routeName}': ${response.status}`);
+            const routes = await response.json();
+            await Promise.all(
+                routes.data.map(async (route: any) => {
+                    const deleteResponse = await fetch(`${KONG_ADMIN_URL}/routes/${route.id}`, {
+                        method: 'DELETE'
+                    });
+                    if (!deleteResponse.ok) {
+                        throw new Error(`Failed to delete route ${route.id}: ${deleteResponse.status}`);
+                    }
+                    console.log(`Route ${route.name} deleted successfully`);
+                })
+            );
         }
     } catch (error) {
-        console.error(`Error getting route '${routeName}':`, error);
-        return null;
+        console.error('Error deleting routes:', error);
+        throw error;
     }
 }
 
 /**
- * @description: Function to register or update a route
+ * @description: Function to delete all plugins for a service
  */
-async function registerOrUpdateRoute(serviceId: string, routeName: string, path: string, methods: string[] = []) {
-    const existingRoute = await getRoute(serviceId, routeName);
+async function deleteAllPlugins(serviceId: string) {
+    try {
+        const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/plugins`);
+        if (response.ok) {
+            const plugins = await response.json();
+            await Promise.all(
+                plugins.data.map(async (plugin: any) => {
+                    const deleteResponse = await fetch(`${KONG_ADMIN_URL}/plugins/${plugin.id}`, {
+                        method: 'DELETE'
+                    });
+                    if (!deleteResponse.ok) {
+                        throw new Error(`Failed to delete plugin ${plugin.id}: ${deleteResponse.status}`);
+                    }
+                    console.log(`Plugin ${plugin.name} deleted successfully`);
+                })
+            );
+        }
+    } catch (error) {
+        console.error('Error deleting plugins:', error);
+        throw error;
+    }
+}
 
+/**
+ * @description: Function to register a route
+ */
+async function registerRoute(serviceId: string, routeName: string, path: string, methods: string[] = []) {
     const routeConfig = {
         name: routeName,
         hosts: HOSTS,
         paths: [path],
         methods,
-        strip_path: false, // Do not remove the base path
+        strip_path: false,
     };
 
-    if (existingRoute) {
-        console.log(`Route '${routeName}' already exists. ID: ${existingRoute.id}. Updating...`);
-        return fetchWithErrorHandling(
-            `${KONG_ADMIN_URL}/services/${serviceId}/routes/${existingRoute.id}`, // Use route ID for update
-            {
-                method: 'PATCH', // Use PATCH for updates
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(routeConfig),
-            },
-            `Error updating route '${routeName}'`
-        );
-    } else {
-        return fetchWithErrorHandling(
-            `${KONG_ADMIN_URL}/services/${serviceId}/routes`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(routeConfig),
-            },
-            `Error registering route '${routeName}'`
-        );
-    }
-}
-
-interface KongPlugin {
-    id: string;
-    name: string;
-    // ... other plugin properties you might need
+    return fetchWithErrorHandling(
+        `${KONG_ADMIN_URL}/services/${serviceId}/routes`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(routeConfig),
+        },
+        `Error registering route '${routeName}'`
+    );
 }
 
 /**
- * @description: Function to get the ID of a plugin by name and service ID
+ * @description: Function to register a plugin
  */
-async function getPluginId(serviceId: string, pluginName: string) {
-    try {
-        const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/plugins`);
-        if (response.ok) {
-            const plugins: { data: KongPlugin[] } = await response.json();
-            if (plugins && plugins.data) {
-                const plugin = plugins.data.find((p: KongPlugin) => p.name === pluginName);
-                if (plugin) {
-                    return plugin.id;
-                }
-            }
-            return null; // Plugin not found
-        } else {
-            throw new Error(`Error listing plugins: ${response.status}`);
-        }
-    } catch (error) {
-        console.error(`Error listing plugins:`, error);
-        return null;
-    }
-}
-
-async function getPlugin(serviceId: string, pluginName: string) {
-    const pluginId = await getPluginId(serviceId, pluginName);
-    if (!pluginId) {
-        return null;
-    }
-
-    try {
-        const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/plugins/${pluginId}`);
-        if (response.ok) {
-            return await response.json();
-        } else if (response.status === 404) {
-            return null;
-        } else {
-            throw new Error(`Error getting plugin '${pluginName}': ${response.status}`);
-        }
-    } catch (error) {
-        console.error(`Error getting plugin '${pluginName}':`, error);
-        return null;
-    }
-}
-
-/**
- * @description: Function to register or update a plugin in a service
- */
-async function registerOrUpdatePluginToService(serviceId: string, pluginName: string, config: any) {
-    const existingPlugin = await getPlugin(serviceId, pluginName);
-
-    if (existingPlugin) {
-        console.log(`Plugin '${pluginName}' already exists in the service. ID: ${existingPlugin.id}. Updating...`);
-        return fetchWithErrorHandling(
-            `${KONG_ADMIN_URL}/services/${serviceId}/plugins/${existingPlugin.id}`,
-            {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ config: config }),
-            },
-            `Error updating plugin '${pluginName}' in the service`
-        );
-    }
-
+async function registerPlugin(serviceId: string, pluginName: string, config: any) {
     return fetchWithErrorHandling(
         `${KONG_ADMIN_URL}/services/${serviceId}/plugins`,
         {
@@ -196,33 +141,48 @@ async function registerOrUpdatePluginToService(serviceId: string, pluginName: st
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: pluginName, config: config }),
         },
-        `Error registering plugin '${pluginName}' in the service`
+        `Error registering plugin '${pluginName}'`
     );
 }
 
 /**
- * @description: Main function to register entities in Kong
+ * @description: Main function to register Kong entities
  */
 export async function registerKongEntities(service: string, routes: { name: string; path: string; methods?: string[] }[]) {
     try {
-        const serviceData = await registerService(service, BACKEND_URL);
+        // Check if service exists
+        let serviceData = await getService(service);
+        
+        if (serviceData) {
+            console.log(`Service '${service}' exists. Removing routes and plugins...`);
+            await deleteAllRoutes(serviceData.id);
+            await deleteAllPlugins(serviceData.id);
+        } else {
+            console.log(`Service '${service}' does not exist. Creating new service...`);
+            serviceData = await registerService(service, BACKEND_URL);
+        }
 
+        // Create new routes
+        console.log('Creating routes...');
         await Promise.all(
             routes.map(({ name, path, methods = [] }) =>
-                registerOrUpdateRoute(serviceData.id, name, path, methods) // Use the new function that updates or creates
+                registerRoute(serviceData.id, name, path, methods)
             )
         );
 
+        // Create plugin
+        console.log('Creating plugin...');
         const preFunctionConfig = {
             access: [
                 "local host = kong.request.get_host(); local tenant = string.match(host, '^([^.]+)%.enroll%.com$'); if tenant then kong.service.request.add_header('X-Tenant', tenant) end",
             ],
         };
 
-        await registerOrUpdatePluginToService(serviceData.id, 'pre-function', preFunctionConfig);
+        await registerPlugin(serviceData.id, 'pre-function', preFunctionConfig);
 
-        console.log('Kong registration completed.');
+        console.log('Kong registration completed successfully.');
     } catch (error) {
         console.error('Error during Kong registration:', error);
+        throw error;
     }
 }
