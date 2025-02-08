@@ -1,6 +1,13 @@
-import express from 'express';
+import express, {Express} from 'express';
 import cors from "cors";
-import { registerFeatures, loggerApp, tenat,redis  } from '@enroll-server/common'
+import { 
+  registerFeatures, 
+  registerKongEntities,
+  loggerApp, 
+  tenat,
+  redis  
+} from '@enroll-server/common'
+import { Logger } from 'pino';
 
 
 
@@ -20,17 +27,23 @@ app.use(tenat(redis))
 
 const PORT = process.env.PORT || 3000;
 
-async function init() {
+!async function init(app:Express,logger:Logger ) {
   try {
-    await registerFeatures(app, logger)
+    
+    await registerFeatures(app, logger) 
+    registerKongEntities("login-service",[
+      { name: 'route-root', path: '/', methods: ['GET'] },
+      { name: 'route-login', path: '/login', methods: ['POST'] },
+    ]);
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
   }
   catch (err) {
     console.error('❌ Error al registrar características:', err);
+    process.exit(1)
   }
-}
-init()
+}(app,logger)
+
 
 
