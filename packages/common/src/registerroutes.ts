@@ -2,6 +2,9 @@ const KONG_ADMIN_URL = process.env.KONG_ADMIN_URL || 'http://localhost:8001';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://host.docker.internal:3000';
 const HOSTS = process.env.KONG_HOSTS?.split(',') || ['*.enroll.com'];
 
+/**
+ * @description: Function to make fetch requests with error handling
+ */
 async function fetchWithErrorHandling(url: string, options: RequestInit, errorMessage: string) {
     try {
         const response = await fetch(url, options);
@@ -18,6 +21,9 @@ async function fetchWithErrorHandling(url: string, options: RequestInit, errorMe
     }
 }
 
+/**
+ * @description: Function to get a service by name
+ */
 async function getService(serviceName: string) {
     try {
         const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceName}`);
@@ -26,19 +32,22 @@ async function getService(serviceName: string) {
         } else if (response.status === 404) {
             return null;
         } else {
-            throw new Error(`Error al obtener el servicio '${serviceName}': ${response.status}`);
+            throw new Error(`Error getting service '${serviceName}': ${response.status}`);
         }
     } catch (error) {
-        console.error(`Error al obtener el servicio '${serviceName}':`, error);
+        console.error(`Error getting service '${serviceName}':`, error);
         return null;
     }
 }
 
+/**
+ * @description: Function to register a service if it doesn't exist, or return it if it does
+ */
 async function registerService(serviceName: string, url: string) {
     const existingService = await getService(serviceName);
 
     if (existingService) {
-        console.log(`El servicio '${serviceName}' ya existe. ID: ${existingService.id}`);
+        console.log(`Service '${serviceName}' already exists. ID: ${existingService.id}`);
         return existingService;
     }
 
@@ -49,10 +58,13 @@ async function registerService(serviceName: string, url: string) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: serviceName, url }),
         },
-        `Error al registrar el servicio '${serviceName}'`
+        `Error registering service '${serviceName}'`
     );
 }
 
+/**
+ * @description: Function to get a route by name and service ID
+ */
 async function getRoute(serviceId: string, routeName: string) {
     try {
         const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/routes/${routeName}`);
@@ -61,39 +73,61 @@ async function getRoute(serviceId: string, routeName: string) {
         } else if (response.status === 404) {
             return null;
         } else {
-            throw new Error(`Error al obtener la ruta '${routeName}': ${response.status}`);
+            throw new Error(`Error getting route '${routeName}': ${response.status}`);
         }
     } catch (error) {
-        console.error(`Error al obtener la ruta '${routeName}':`, error);
+        console.error(`Error getting route '${routeName}':`, error);
         return null;
     }
 }
 
-async function registerRoute(serviceId: string, routeName: string, path: string, methods: string[] = []) {
+/**
+ * @description: Function to register or update a route
+ */
+async function registerOrUpdateRoute(serviceId: string, routeName: string, path: string, methods: string[] = []) {
     const existingRoute = await getRoute(serviceId, routeName);
 
-    if (existingRoute) {
-        console.log(`La ruta '${routeName}' ya existe. ID: ${existingRoute.id}`);
-        return existingRoute;
-    }
+    const routeConfig = {
+        name: routeName,
+        hosts: HOSTS,
+        paths: [path],
+        methods,
+        strip_path: false, // Do not remove the base path
+    };
 
-    return fetchWithErrorHandling(
-        `${KONG_ADMIN_URL}/services/${serviceId}/routes`,
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: routeName, hosts: HOSTS, paths: [path], methods, strip_path: false }),
-        },
-        `Error al registrar la ruta '${routeName}'`
-    );
+    if (existingRoute) {
+        console.log(`Route '${routeName}' already exists. ID: ${existingRoute.id}. Updating...`);
+        return fetchWithErrorHandling(
+            `${KONG_ADMIN_URL}/services/${serviceId}/routes/${existingRoute.id}`, // Use route ID for update
+            {
+                method: 'PATCH', // Use PATCH for updates
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(routeConfig),
+            },
+            `Error updating route '${routeName}'`
+        );
+    } else {
+        return fetchWithErrorHandling(
+            `${KONG_ADMIN_URL}/services/${serviceId}/routes`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(routeConfig),
+            },
+            `Error registering route '${routeName}'`
+        );
+    }
 }
 
 interface KongPlugin {
     id: string;
     name: string;
-    // ... otras propiedades del plugin que puedas necesitar
+    // ... other plugin properties you might need
 }
 
+/**
+ * @description: Function to get the ID of a plugin by name and service ID
+ */
 async function getPluginId(serviceId: string, pluginName: string) {
     try {
         const response = await fetch(`${KONG_ADMIN_URL}/services/${serviceId}/plugins`);
@@ -105,12 +139,12 @@ async function getPluginId(serviceId: string, pluginName: string) {
                     return plugin.id;
                 }
             }
-            return null; // Plugin no encontrado
+            return null; // Plugin not found
         } else {
-            throw new Error(`Error al listar plugins: ${response.status}`);
+            throw new Error(`Error listing plugins: ${response.status}`);
         }
     } catch (error) {
-        console.error(`Error al listar plugins:`, error);
+        console.error(`Error listing plugins:`, error);
         return null;
     }
 }
@@ -128,19 +162,22 @@ async function getPlugin(serviceId: string, pluginName: string) {
         } else if (response.status === 404) {
             return null;
         } else {
-            throw new Error(`Error al obtener el plugin '${pluginName}': ${response.status}`);
+            throw new Error(`Error getting plugin '${pluginName}': ${response.status}`);
         }
     } catch (error) {
-        console.error(`Error al obtener el plugin '${pluginName}':`, error);
+        console.error(`Error getting plugin '${pluginName}':`, error);
         return null;
     }
 }
 
+/**
+ * @description: Function to register or update a plugin in a service
+ */
 async function registerOrUpdatePluginToService(serviceId: string, pluginName: string, config: any) {
     const existingPlugin = await getPlugin(serviceId, pluginName);
 
     if (existingPlugin) {
-        console.log(`El plugin '${pluginName}' ya existe en el servicio. ID: ${existingPlugin.id}. Actualizando...`);
+        console.log(`Plugin '${pluginName}' already exists in the service. ID: ${existingPlugin.id}. Updating...`);
         return fetchWithErrorHandling(
             `${KONG_ADMIN_URL}/services/${serviceId}/plugins/${existingPlugin.id}`,
             {
@@ -148,7 +185,7 @@ async function registerOrUpdatePluginToService(serviceId: string, pluginName: st
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ config: config }),
             },
-            `Error al actualizar el plugin '${pluginName}' en el servicio`
+            `Error updating plugin '${pluginName}' in the service`
         );
     }
 
@@ -159,17 +196,20 @@ async function registerOrUpdatePluginToService(serviceId: string, pluginName: st
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: pluginName, config: config }),
         },
-        `Error al registrar el plugin '${pluginName}' en el servicio`
+        `Error registering plugin '${pluginName}' in the service`
     );
 }
 
+/**
+ * @description: Main function to register entities in Kong
+ */
 export async function registerKongEntities(service: string, routes: { name: string; path: string; methods?: string[] }[]) {
     try {
         const serviceData = await registerService(service, BACKEND_URL);
 
         await Promise.all(
             routes.map(({ name, path, methods = [] }) =>
-                registerRoute(serviceData.id, name, path, methods)
+                registerOrUpdateRoute(serviceData.id, name, path, methods) // Use the new function that updates or creates
             )
         );
 
@@ -181,8 +221,8 @@ export async function registerKongEntities(service: string, routes: { name: stri
 
         await registerOrUpdatePluginToService(serviceData.id, 'pre-function', preFunctionConfig);
 
-        console.log('Registro en Kong completado.');
+        console.log('Kong registration completed.');
     } catch (error) {
-        console.error('Error durante el registro en Kong:', error);
+        console.error('Error during Kong registration:', error);
     }
 }
