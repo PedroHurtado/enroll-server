@@ -64,6 +64,20 @@ services:
       - kong-net
     restart: on-failure
 
+  konga:
+    image: pantsel/konga:latest
+    container_name: konga
+    environment:
+      - "KONGA_BACKEND=http://kong:8001" # URL del administrador de Kong
+      - "KONGA_COOKIE_SECRET=some_random_secret"
+    ports:
+      - "1337:1337"
+    networks:
+      - kong-net
+    depends_on:
+      - kong
+    restart: on-failure
+
 networks:
   kong-net:
     driver: bridge
