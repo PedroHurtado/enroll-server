@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 3000;
   try {
     
     await registerFeatures(app, logger) 
-    registerKongEntities("login-service",[
+    await registerKongEntities("login-service",[
       { name: 'route-root', path: '/', methods: ['GET'] },
       { name: 'route-login', path: '/login', methods: ['POST'] },
     ]);
