@@ -1,6 +1,7 @@
-const KONG_ADMIN_URL = process.env.KONG_ADMIN_URL || 'http://localhost:8001';
+import { HOSTS } from "./config/hosts";
+const KONG_ADMIN_URL = `http://${HOSTS.kong}:8001`;
 const BACKEND_URL = process.env.BACKEND_URL || 'http://host.docker.internal:3000';
-const HOSTS = process.env.KONG_HOSTS?.split(',') || ['*.enroll.com'];
+//const HOSTS = process.env.KONG_HOSTS?.split(',') || ['*.enroll.com'];
 
 /**
  * @description: Function to make fetch requests with error handling
@@ -113,7 +114,7 @@ async function deleteAllPlugins(serviceId: string) {
 async function registerRoute(serviceId: string, routeName: string, path: string, methods: string[] = []) {
     const routeConfig = {
         name: routeName,
-        hosts: HOSTS,
+        hosts: ['*.enroll.com'],
         paths: [path],
         methods,
         strip_path: false,

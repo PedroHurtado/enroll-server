@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "start": "node .",
+    "start": "pnpm run build && node .",
     "build": "pnpm --filter common run build && rollup -c",
     "dev": "run-p watch:*",
     "watch:common": "pnpm --filter common run watch",

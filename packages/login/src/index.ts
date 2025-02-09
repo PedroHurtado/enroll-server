@@ -5,13 +5,9 @@ import {
   registerKongEntities,
   loggerApp, 
   tenat,
-  redis  
+  redis,  
+  HOSTS
 } from '@enroll-server/common'
-import { Logger } from 'pino';
-
-
-
-const { httpLogger, logger } = loggerApp('http://localhost:9200');
 
 const corsOptions = {
   origin: "*",
@@ -22,14 +18,15 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(httpLogger);
-app.use(tenat(redis))
+
 
 const PORT = process.env.PORT || 3000;
 
-!async function init(app:Express,logger:Logger ) {
+!async function init(app:Express) {
   try {
-    
+    const { httpLogger, logger } = loggerApp(`http://${HOSTS.elasticsearch}:9200`);
+    app.use(httpLogger);
+    app.use(tenat(redis))
     await registerFeatures(app, logger) 
     await registerKongEntities("login-service",[
       { name: 'route-root', path: '/', methods: ['GET'] },
@@ -43,7 +40,7 @@ const PORT = process.env.PORT || 3000;
     console.error('❌ Error al registrar características:', err);
     process.exit(1)
   }
-}(app,logger)
+}(app)
 
 
 

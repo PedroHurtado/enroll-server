@@ -6,7 +6,7 @@
   },
   "include": [
     "src/**/*"
-  ],
+, "../common/src/config"  ],
   "exclude": [
     "src/node_modules"
   ],
