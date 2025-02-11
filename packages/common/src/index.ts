@@ -5,6 +5,7 @@ declare global {
         }
     }
 }
+
 export * from './validate'
 export * from './authorize'
 export * from './registerfeatures'
@@ -15,3 +16,4 @@ export * from './decorators'
 export * from './tenantmiddelware'
 export * from './redisconnection'
 export * from './registerroutes'
+export * from './config'

@@ -1,4 +1,5 @@
-const KONG_ADMIN_URL = 'http://localhost:8001';
+import { config } from "./config";
+const KONG_ADMIN_URL = config.kong;
 const BACKEND_URL = process.env.BACKEND_URL || 'http://host.docker.internal:3000';
 const HOSTS = process.env.KONG_HOSTS?.split(',') || ['*.enroll.com'];
 

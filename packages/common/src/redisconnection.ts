@@ -1,6 +1,6 @@
 import { Redis } from 'ioredis';
-
-export const redis = new Redis('redis://localhost:6379');
+import { config } from '@enroll-server/common';
+export const redis = new Redis(config.redis);
 
 const gracefulShutdown = async () => {
     console.log("Cerrando conexión con Redis...");
