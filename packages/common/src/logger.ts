@@ -2,9 +2,9 @@ import pino from 'pino';
 import pinoHttp from 'pino-http';
 import pinoElastic from 'pino-elasticsearch';
 
-export function loggerApp(node: string) {
+export function loggerApp(node: string, index:string) {
   const streamToElastic = pinoElastic({
-    index: 'logs-app',
+    index,
     node
   });
   const logger = pino({}, streamToElastic);

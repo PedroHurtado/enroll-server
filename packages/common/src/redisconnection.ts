@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis';
-import { config } from '@enroll-server/common';
+import { config } from '../src/config'
 export const redis = new Redis(config.redis);
 
 const gracefulShutdown = async () => {
