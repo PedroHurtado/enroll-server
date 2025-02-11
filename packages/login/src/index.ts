@@ -1,13 +1,13 @@
-import express, {Express} from 'express';
+import express, { Express } from 'express';
 import cors from "cors";
-import { 
-  registerFeatures, 
+import {
+  registerFeatures,
   registerKongEntities,
-  loggerApp, 
+  loggerApp,
   tenat,
-  redis,  
-  config  
+  redis,
 } from '@enroll-server/common'
+import { config } from './config';
 
 const corsOptions = {
   origin: "*",
@@ -16,24 +16,27 @@ const corsOptions = {
 };
 
 const app = express();
-app.use(cors(corsOptions));
-app.use(express.json());
 
 
-const PORT = process.env.PORT || 3000;
-
-!async function init(app:Express) {
+!async function init(app: Express) {
   try {
     const { httpLogger, logger } = loggerApp(config.elastic);
+    app.use(cors(corsOptions));
+    app.use(express.json());
     app.use(httpLogger);
     app.use(tenat(redis))
-    await registerFeatures(app, logger) 
-    await registerKongEntities("login-service",[
-      { name: 'route-root', path: '/', methods: ['GET'] },
-      { name: 'route-login', path: '/login', methods: ['POST'] },
-    ]);
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+    await registerFeatures(app, logger)
+    await registerKongEntities(
+      config.name,
+      config.domains,
+      config.bakend,
+      [
+        { name: 'route-root', path: '/', methods: ['GET'] },
+        { name: 'route-login', path: '/login', methods: ['POST'] },
+      ]
+    );
+    app.listen(config.port, () => {
+      console.log(`Server is running on http://localhost:${config.port}`);
     });
   }
   catch (err) {
