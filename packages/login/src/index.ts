@@ -5,8 +5,7 @@ import {
   registerKongEntities,
   loggerApp, 
   tenat,
-  redis,  
-  HOSTS
+  redis,    
 } from '@enroll-server/common'
 
 const corsOptions = {
@@ -24,7 +23,7 @@ const PORT = process.env.PORT || 3000;
 
 !async function init(app:Express) {
   try {
-    const { httpLogger, logger } = loggerApp(`http://${HOSTS.elasticsearch}:9200`);
+    const { httpLogger, logger } = loggerApp(`http://localhost:9200`);
     app.use(httpLogger);
     app.use(tenat(redis))
     await registerFeatures(app, logger) 
