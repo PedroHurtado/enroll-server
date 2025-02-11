@@ -1,7 +1,6 @@
 import { Redis } from 'ioredis';
-import { HOSTS } from './config/hosts';
 
-export const redis = new Redis(`redis://${HOSTS.redis}:6379`);
+export const redis = new Redis('redis://localhost:6379');
 
 const gracefulShutdown = async () => {
     console.log("Cerrando conexión con Redis...");
