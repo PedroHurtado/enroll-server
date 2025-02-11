@@ -1,6 +1,6 @@
 pnpm --filter <package-name> run build
 pnpm --filter <package-name> start
-docker build -t <package-name>-service -f packages/<package-name>/Dockerfile .
+docker build -t login -f Dockerfile ./packages/login
 docker run --name <package-name> -p <local-port>:3000 <package-name>-service
 docker stop <package-name>
 docker rm <package-name>
