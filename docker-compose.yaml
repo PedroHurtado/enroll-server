@@ -41,7 +41,8 @@ services:
     networks:
       - app_network
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     ports:
       - "5601:5601"
     environment:
@@ -96,6 +97,11 @@ services:
       - "8001:8001"
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "kong health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: on-failure
 
   konga:
@@ -109,7 +115,8 @@ services:
     networks:
       - app_network
     depends_on:
-      - kong
+      kong:
+        condition: service_healthy
     restart: on-failure
 
   redis:
@@ -123,6 +130,11 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   mongo:
     image: mongo
@@ -136,18 +148,34 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
-      - app_network  
+      - app_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
   login:
-    image: login  # Asegúrate de que esta imagen exista y esté disponible
+    image: login
     container_name: login
     ports:
       - "3000:3000"
     networks:
       - app_network
     depends_on:
-      - kong
-      - redis
-      - mongo
-      - elasticsearch
+      kong:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     restart: on-failure
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
