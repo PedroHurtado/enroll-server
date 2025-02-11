@@ -14,4 +14,4 @@ RUN npm install
 EXPOSE 3000
 
 # Ejecutar la aplicación
-CMD ["node", "."]
+CMD ["node", ".", "--prod"]

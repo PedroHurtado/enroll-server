@@ -136,4 +136,20 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
+      - app_network  
+  login:
+    image: login  # Asegúrate de que esta imagen exista y esté disponible
+    container_name: login
+    networks:
       - app_network
+    depends_on:
+      kong:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    restart: on-failure
+
