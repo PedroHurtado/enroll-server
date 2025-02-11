@@ -25,7 +25,7 @@ const app = express();
     app.use(express.json());
     app.use(httpLogger);
     app.use(tenat(redis))
-    await registerFeatures(app, logger)
+    await registerFeatures(app, logger, import.meta.url)
     await registerKongEntities(
       config.name,
       config.domains,

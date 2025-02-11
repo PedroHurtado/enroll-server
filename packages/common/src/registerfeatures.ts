@@ -2,25 +2,21 @@ import { Express } from 'express';
 import { glob } from 'glob';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { dirname } from 'path';
 import { Logger } from 'pino';
+import { dirname } from 'path';
 
-export async function registerFeatures(app: Express, logger: Logger) {
+export async function registerFeatures(app: Express, logger: Logger, moduleUrl: string) {
     try {
-        // Usamos SERVICE_PATH si está definido, si no, usamos la ruta calculada
-        const basePath = process.env.SERVICE_PATH || dirname(fileURLToPath(import.meta.url));
-        const featuresPath = process.env.NODE_ENV === 'development' 
-            ? path.join(basePath, 'src', 'features')
-            : path.join(basePath, 'features');
-        
-        console.log(`🔍 Entorno: ${process.env.NODE_ENV}`);
+        // Determinar la ubicación de `features` a partir de import.meta.url
+        const basePath = dirname(fileURLToPath(moduleUrl));
+        const featuresPath = path.join(basePath, 'features');
+
         console.log(`🔍 Buscando archivos en: ${featuresPath}`);
         
         const files = await glob(`${featuresPath}/**/*.{js,ts}`, {
             ignore: ['**/*.test.*', '**/*.spec.*', '**/*.d.ts']
         });
-        
-        
+
         console.log(`📂 Archivos encontrados:`, files);
         
         for (const file of files) {
@@ -41,4 +37,4 @@ export async function registerFeatures(app: Express, logger: Logger) {
     } catch (error) {
         throw error;
     }
- }
+}
