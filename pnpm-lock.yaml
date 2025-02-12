@@ -182,6 +182,94 @@ importers:
         specifier: ^5.0.4
         version: 5.7.3
 
+  packages/tenant:
+    dependencies:
+      '@enroll-server/common':
+        specifier: workspace:*
+        version: link:../common
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.5
+      express:
+        specifier: ^4.18.2
+        version: 4.21.2
+      express-validator:
+        specifier: ^7.2.1
+        version: 7.2.1
+      glob:
+        specifier: ^11.0.1
+        version: 11.0.1
+      ioredis:
+        specifier: ^5.4.2
+        version: 5.4.2
+      mongoose:
+        specifier: ^8.9.5
+        version: 8.9.5
+      pino:
+        specifier: ^9.6.0
+        version: 9.6.0
+      pino-elasticsearch:
+        specifier: ^8.1.0
+        version: 8.1.0
+      pino-http:
+        specifier: ^10.4.0
+        version: 10.4.0
+    devDependencies:
+      '@rollup/plugin-alias':
+        specifier: ^5.1.1
+        version: 5.1.1(rollup@4.34.0)
+      '@rollup/plugin-commonjs':
+        specifier: ^28.0.2
+        version: 28.0.2(rollup@4.34.0)
+      '@rollup/plugin-json':
+        specifier: ^6.1.0
+        version: 6.1.0(rollup@4.34.0)
+      '@rollup/plugin-node-resolve':
+        specifier: ^16.0.0
+        version: 16.0.0(rollup@4.34.0)
+      '@rollup/plugin-typescript':
+        specifier: ^12.1.2
+        version: 12.1.2(rollup@4.34.0)(tslib@2.8.1)(typescript@5.7.3)
+      '@types/body-parser':
+        specifier: ^1.19.2
+        version: 1.19.5
+      '@types/cors':
+        specifier: ^2.8.16
+        version: 2.8.17
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.21
+      '@types/express-validator':
+        specifier: ^3.0.2
+        version: 3.0.2
+      '@types/glob':
+        specifier: ^8.1.0
+        version: 8.1.0
+      '@types/mongoose':
+        specifier: ^5.11.97
+        version: 5.11.97
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.17.16
+      rollup:
+        specifier: ^4.34.0
+        version: 4.34.0
+      rollup-plugin-copy:
+        specifier: ^3.5.0
+        version: 3.5.0
+      rollup-plugin-delete:
+        specifier: ^2.1.0
+        version: 2.1.0(rollup@4.34.0)
+      rollup-plugin-dts:
+        specifier: ^6.1.1
+        version: 6.1.1(rollup@4.34.0)(typescript@5.7.3)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      typescript:
+        specifier: ^5.0.4
+        version: 5.7.3
+
 packages:
 
   '@babel/code-frame@7.26.2':
