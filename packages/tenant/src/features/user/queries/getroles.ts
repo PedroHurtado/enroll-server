@@ -6,6 +6,7 @@ export default function getRoles(app:Express, logger: Logger){
 
     const path = '/tenant/:userId/roles'
     interface  IResponse{
+        userId:string,
         roles:string[]
     }
     class Service {
@@ -14,12 +15,13 @@ export default function getRoles(app:Express, logger: Logger){
         @Log<IResponse>(logger)
         static async  handler(userId:string):Promise<IResponse>{
             return {
+                userId,
                 roles:["Admin"]
             }
         }
     }
     const controller = async (req:Request, res:Response)=>{
-        const result = Service.handler(req.params.userId)
+        const result = await Service.handler(req.params.userId)
         res.json(result)
     }
     app.get(path, controller)

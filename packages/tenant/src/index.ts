@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express} from 'express';
 import cors from "cors";
 import {
   registerFeatures,
@@ -19,6 +19,7 @@ const corsOptions = {
 const app = express();
 
 
+
 !async function init(app: Express) {
   try {
     const { httpLogger, logger } = loggerApp(config.elastic, config.name);
@@ -35,7 +36,7 @@ const app = express();
       config.domains,
       config.bakend,
       [
-        { name: 'route-root', path: '/tenant/(?<userId>[^/]+)/roles', methods: ['GET'] }        
+        { name: 'route-roles', path: '/tenant', methods: ['GET'] }        
       ]
     );
     app.listen(config.port, () => {
