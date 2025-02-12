@@ -1,108 +1,122 @@
-import { getRequestHeaders } from '../requestcontext'
+import { getRequestHeaders } from '../requestcontext';
+import { ResponseStrategy } from './estrategies';
 
-function getHeaders(headers?: Record<string, string>) {
-    if (headers) {
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+type HttpHeaders = Record<string, string>;
+
+interface FetchOptions {
+    method: HttpMethod;
+    headers?: HttpHeaders;
+    body?: any;
+}
+
+// Opción 1: Clase que expone los métodos HTTP
+export class Http {
+    private static defaultHeaders: HttpHeaders = {
+        "accept": "application/json"
+    };
+
+    private static getHeaders(headers: HttpHeaders = {}): HttpHeaders {
         return {
             ...getRequestHeaders(),
             ...headers
+        };
+    }
+
+    private static analyzeFetchBody(body: any): { body: any; headers?: HttpHeaders } {
+        if (body === null || body === undefined) {
+            return { body: null };
         }
-    }
-    return {
-        ...getRequestHeaders()
-    }
 
-}
+        if (
+            body instanceof Blob ||
+            body instanceof File ||
+            body instanceof FormData ||
+            body instanceof URLSearchParams ||
+            body instanceof ReadableStream
+        ) {
+            return { body };
+        }
 
-function analyzeFetchBody(body: any): { body: any; headers?: Record<string, string> } {
-    const headers: Record<string, string> = {};
+        const headers: HttpHeaders = {};
 
-    if (body === null || body === undefined) {
-        return { body: null };
-    }
+        if (typeof body === "string") {
+            headers["Content-Type"] = "text/plain";
+            return { body, headers };
+        }
 
-    if (body instanceof Blob ||
-        body instanceof File ||
-        body instanceof FormData ||
-        body instanceof URLSearchParams ||
-        body instanceof ReadableStream) {
-        return { body };
-    }
+        if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
+            headers["Content-Type"] = "application/octet-stream";
+            return { body, headers };
+        }
 
-    if (typeof body === "string") {
-        headers["Content-Type"] = "text/plain";
-        return { body, headers };
-    }
+        if (typeof body === "object") {
+            headers["Content-Type"] = "application/json";
+            return { body: JSON.stringify(body), headers };
+        }
 
-    if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
-        headers["Content-Type"] = "application/octet-stream";
-        return { body, headers };
-    }
-
-    if (typeof body === "object") {
-        headers["Content-Type"] = "application/json";
-        return { body: JSON.stringify(body), headers };
+        throw new Error("Tipo de body no soportado");
     }
 
-    throw new Error("Tipo de body no soportado");
-}
+    private static async request<T>(
+        method: HttpMethod,
+        url: string,
+        options: Partial<FetchOptions> = {}
+    ): Promise<T> {
+        const headers = this.getHeaders({
+            ...this.defaultHeaders,
+            ...options.headers
+        });
 
+        let fetchOptions: FetchOptions = {
+            method,
+            headers
+        };
 
-export class HttpGet {
-    static get<T>(url: string, headers: Record<string, string> = {
-        "accept": "application/json"
-    }): Promise<T> {
-        return fetch(url, {
-            method: 'GET',
-            headers: getHeaders(headers)
-        }) as Promise<T>
-    }
-}
-export class HttpDelete {
-    static delete<T>(url: string): Promise<T> {
-        return fetch(url, {
-            method: 'GET',
-            headers: getHeaders()
-        }) as Promise<T>
-    }
-}
-export class HttpPost {
-    static post<T>(url: string, body: any, headers: Record<string, string> = {
-        "accept": "application/json"
-    }): Promise<T> {
-        const { body: requestBody,
-            headers: requestHeaders } = analyzeFetchBody(body);
-        return fetch(url, {
-            method: 'POST',
-            body: requestBody,
-            headers: getHeaders({ ...headers, ...requestHeaders })
-        }) as Promise<T>
-    }
-}
+        if (options.body) {
+            const { body: requestBody, headers: bodyHeaders } = this.analyzeFetchBody(options.body);
+            fetchOptions = {
+                ...fetchOptions,
+                body: requestBody,
+                headers: {
+                    ...fetchOptions.headers,
+                    ...bodyHeaders
+                }
+            };
+        }
 
-export class HttpPut {
-    static put<T>(url: string, body: any, headers: Record<string, string> = {
-        "accept": "application/json"
-    }): Promise<T> {
-        const { body: requestBody,
-            headers: requestHeaders } = analyzeFetchBody(body);
-        return fetch(url, {
-            method: 'POST',
-            body: requestBody,
-            headers: getHeaders({ ...headers, ...requestHeaders })
-        }) as Promise<T>
+        const response = await fetch(url, fetchOptions);
+        const status = response.status.toString() as keyof typeof ResponseStrategy;
+        const strategy = ResponseStrategy[status];
+        return strategy(response) as T;
+    }
+
+    static async get<T>(url: string, headers?: HttpHeaders): Promise<T> {
+        return this.request<T>('GET', url, { headers });
+    }
+
+    static async post<T>(url: string, body: any, headers?: HttpHeaders): Promise<T> {
+        return this.request<T>('POST', url, { body, headers });
+    }
+
+    static async put<T>(url: string, body: any, headers?: HttpHeaders): Promise<T> {
+        return this.request<T>('PUT', url, { body, headers });
+    }
+
+    static async patch<T>(url: string, body: any, headers?: HttpHeaders): Promise<T> {
+        return this.request<T>('PATCH', url, { body, headers });
+    }
+
+    static async remove<T>(url: string, headers?: HttpHeaders): Promise<T> {
+        return this.request<T>('DELETE', url, { headers });
     }
 }
 
-export class HttpPatch {
-    static patch<T>(url: string, body: any, headers: Record<string, string> = {
-        "accept": "application/json"
-    }): Promise<T> {
-        const { body: requestBody,
-            headers: requestHeaders } = analyzeFetchBody(body);
-        return fetch(url, {
-            method: 'POST',
-            body: requestBody,
-            headers: getHeaders({ ...headers, ...requestHeaders })
-        }) as Promise<T>
-    }
-}
+
+export const http = {
+    get: Http.get.bind(Http),
+    post: Http.post.bind(Http),
+    put: Http.put.bind(Http),
+    patch: Http.patch.bind(Http),
+    delete: Http.remove.bind(Http)
+} as const;
