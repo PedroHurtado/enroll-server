@@ -1,11 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { setRequestHeaders } from "./requestcontext";
+import { withRequestHeaders } from "./requestcontext";
 export function context() {
-    return function (req: Request, res: Response, next: NextFunction) {
-        setRequestHeaders({
-            'Authorization': req.headers['Authorization'] as string || '',
+    return async function (req: Request, res: Response, next: NextFunction) {
+
+        const headers = {
+            'Authorization': req.headers['authorization'] as string || '',
             'x-tenant': req.headers['x-tenant'] as string || '',
+        };
+        withRequestHeaders(headers, () => {
+            next();
+            return Promise.resolve();
+        }).catch(error => {
+            next(error); // Pasamos el error a Express y paramos la ejecución
+            return;
         });
-        next()
     }
 } 
