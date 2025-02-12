@@ -6,6 +6,7 @@ import {
   loggerApp,
   tenat,
   redis,
+  context,
 } from '@enroll-server/common'
 import { config } from './config';
 
@@ -21,10 +22,13 @@ const app = express();
 !async function init(app: Express) {
   try {
     const { httpLogger, logger } = loggerApp(config.elastic, config.name);
+    
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(httpLogger);
     app.use(tenat(redis))
+    app.use(context())
+
     await registerFeatures(app, logger, import.meta.url)
     await registerKongEntities(
       config.name,
