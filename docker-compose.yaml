@@ -156,6 +156,29 @@ services:
       retries: 5
       start_period: 40s
 
+  tenat:
+    image: tenant
+    container_name: tenant
+    ports:
+      - "3001:3001"
+    networks:
+      - app_network
+    depends_on:
+      kong:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   login:
     image: login
     container_name: login
