@@ -9,8 +9,6 @@ interface FetchOptions {
     headers?: HttpHeaders;
     body?: any;
 }
-
-// Opción 1: Clase que expone los métodos HTTP
 export class Http {
     private static defaultHeaders: HttpHeaders = {
         "accept": "application/json"
@@ -107,16 +105,8 @@ export class Http {
         return this.request<T>('PATCH', url, { body, headers });
     }
 
-    static async remove<T>(url: string, headers?: HttpHeaders): Promise<T> {
+    static async delete<T>(url: string, headers?: HttpHeaders): Promise<T> {
         return this.request<T>('DELETE', url, { headers });
     }
 }
 
-
-export const http = {
-    get: Http.get.bind(Http),
-    post: Http.post.bind(Http),
-    put: Http.put.bind(Http),
-    patch: Http.patch.bind(Http),
-    delete: Http.remove.bind(Http)
-} as const;
