@@ -35,8 +35,7 @@ const app = express();
       config.domains,
       config.bakend,
       [
-        { name: 'route-root', path: '/', methods: ['GET'] },
-        { name: 'route-login', path: '/login', methods: ['POST'] },
+        { name: 'route-root', path: '/tenant/(?<userId>[^/]+)/roles', methods: ['GET'] }        
       ]
     );
     app.listen(config.port, () => {

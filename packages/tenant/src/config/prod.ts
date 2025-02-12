@@ -1,9 +1,9 @@
 import { config } from "@enroll-server/common";
 
 const prod = {
-    port:3000,
-    name:'login',
-    bakend:'http://login:3000',
+    port:3001,
+    name:'tenant',
+    bakend:'http://tenant:3001',
     domains:['*.enroll.com'],
     ...config    
 }
