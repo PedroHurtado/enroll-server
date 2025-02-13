@@ -34,8 +34,7 @@ const app = express();
       config.name,
       config.domains,
       config.bakend,
-      [
-        { name: 'route-root', path: '/', methods: ['GET'] },
+      [        
         { name: 'route-login', path: '/login', methods: ['POST'] },
       ]
     );

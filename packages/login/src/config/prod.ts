@@ -5,6 +5,7 @@ const prod = {
     name:'login',
     bakend:'http://login:3000',
     domains:['*.enroll.com'],
+    tenant:'http://tenant:3001',
     ...config    
 }
 

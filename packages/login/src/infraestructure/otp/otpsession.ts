@@ -1,5 +1,5 @@
 import { redis } from "@enroll-server/common";
-import { IOtp } from "../../domain/user/otp";
+import { IOtp } from "../../domain/otp/otp";
 
 const getKey = ({ id }: { id: string }) => {
     return `otp:${id}`;

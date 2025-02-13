@@ -8,9 +8,10 @@ import {
 } from '@enroll-server/common'
 
 import { ContextRunner } from 'express-validator';
-import { OTPGenerator } from '../../../domain/user/otpservice';
-import { setOtp } from '../../../infraestructure/user/otpsession';
-import { IOtp } from '../../../domain/user/otp';
+import { OTPGenerator } from '../../../domain/otp/otpservice';
+import { IOtp } from '../../../domain/otp/otp';
+import { setOtp } from '../../../infraestructure/otp/otpsession';
+import { getRoles } from 'packages/login/src/infraestructure/user/getroles';
 
 export default function create(app: Express, logger: Logger) {
 
@@ -20,8 +21,7 @@ export default function create(app: Express, logger: Logger) {
         tenantId?: string
     }
     interface IResponse {
-        id: string,
-        otp: string
+        id: string,       
     }
     const path = '/login';
 
@@ -33,16 +33,17 @@ export default function create(app: Express, logger: Logger) {
         @Log<IResponse>(logger)
         static async handler(request: IRequest): Promise<IResponse> {
             const result = OTPGenerator.generateOTP()
+            const {roles} = await getRoles(request.emailOrPhone)
             const otp: IOtp = {
                 id: crypto.randomUUID(),
                 tenantId: request.tenantId,
                 emailOrPhone: request.emailOrPhone,
+                roles,
                 ...result
             }
             setOtp(otp)
             return {
-                id: otp.id,
-                otp: otp.otp
+                id: otp.id               
             }
         }
     }
