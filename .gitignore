@@ -28,5 +28,6 @@ out/
 
 # Configuración de IDEs
 .vscode/
+!.vscode/launch.json
 .idea/
 .DS_Store

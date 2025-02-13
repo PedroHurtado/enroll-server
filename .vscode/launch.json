@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Service",
+            "type": "node",
+            "request": "launch",
+            "skipFiles": ["<node_internals>/**"],
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": [
+                "--filter",
+                "${input:serviceName}",
+                "run",
+                "dev"
+            ],
+            "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "serviceName",
+            "type": "promptString",
+            "description": "Enter the service name to run"
+        }
+    ]
+}
