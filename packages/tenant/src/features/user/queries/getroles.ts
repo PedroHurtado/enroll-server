@@ -4,7 +4,7 @@ import { Logger } from "pino";
 
 export default function getRoles(app:Express, logger: Logger){
 
-    const path = '/tenant/:userId/roles'
+    const path = '/tenant/roles/:userId'
     interface  IResponse{
         userId:string,
         roles:string[]

@@ -36,7 +36,7 @@ const app = express();
       config.domains,
       config.bakend,
       [
-        { name: 'route-roles', path: '/tenant', methods: ['GET'] }        
+        { name: 'route-roles', path: '~/tenant/roles/[^/]+$', methods: ['GET'] }                       
       ]
     );
     app.listen(config.port, () => {
