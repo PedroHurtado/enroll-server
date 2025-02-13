@@ -1,4 +1,4 @@
-import express, { Express} from 'express';
+import express, { Express, Request, Response, NextFunction} from 'express';
 import cors from "cors";
 import {
   registerFeatures,
@@ -7,6 +7,7 @@ import {
   tenat,
   redis,
   context,
+  
 } from '@enroll-server/common'
 import { config } from './config';
 
@@ -24,11 +25,13 @@ const app = express();
   try {
     const { httpLogger, logger } = loggerApp(config.elastic, config.name);
     
+    app.use(context())
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(httpLogger);
-    app.use(tenat(redis))
-    app.use(context())
+    app.use(tenat(redis))   
+
+
 
     await registerFeatures(app, logger, import.meta.url)
     await registerKongEntities(
