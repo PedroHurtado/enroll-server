@@ -4,7 +4,9 @@ import {
     validate,
     authorize,
     Log,
-    Connection
+    Connection,      
+    getRequestHeaders,
+    context
 } from '@enroll-server/common'
 
 import { ContextRunner } from 'express-validator';
@@ -14,8 +16,8 @@ import { setOtp } from '../../../infraestructure/otp/otpsession';
 import { getRoles } from 'packages/login/src/infraestructure/user/getroles';
 
 export default function create(app: Express, logger: Logger) {
-
-
+    
+    app.use(context())
     interface IRequest {
         emailOrPhone: string,
         tenantId?: string
@@ -49,8 +51,7 @@ export default function create(app: Express, logger: Logger) {
     }
 
 
-    const controller = async (req: Request, res: Response) => {
-
+    const controller = async (req: Request, res: Response) => {        
         const request: IRequest = {
             emailOrPhone: req.body.emailOrPhone,
             tenantId: req.tenantId

@@ -23,9 +23,8 @@ const app = express();
 
 !async function init(app: Express) {
   try {
-    const { httpLogger, logger } = loggerApp(config.elastic, config.name);
+    const { httpLogger, logger } = loggerApp(config.elastic, config.name);   
     
-    app.use(context())
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(httpLogger);

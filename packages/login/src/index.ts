@@ -26,8 +26,7 @@ const app = express();
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(httpLogger);
-    app.use(tenat(redis))
-    app.use(context())
+    app.use(tenat(redis))    
 
     await registerFeatures(app, logger, import.meta.url)
     await registerKongEntities(
@@ -37,7 +36,7 @@ const app = express();
       [        
         { name: 'route-login', path: '/login', methods: ['POST'] },
       ]
-    );
+    );    
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
     });
