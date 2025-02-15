@@ -1,0 +1,54 @@
+{
+  "name": "@enroll-server/messages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "pnpm run build && node .",
+    "build": "pnpm --filter common run build && rollup -c",
+    "dev": "run-p watch:*",
+    "watch:common": "pnpm --filter common run watch",
+    "watch:server": "tsx watch src/index.ts",
+    "watch": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@enroll-server/common": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-validator": "^7.2.1",
+    "glob": "^11.0.1",
+    "ioredis": "^5.4.2",
+    "mongoose": "^8.9.5",
+    "pino": "^9.6.0",
+    "pino-elasticsearch": "^8.1.0",
+    "pino-http": "^10.4.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/body-parser": "^1.19.2",
+    "@types/cors": "^2.8.16",
+    "@types/express": "^4.17.21",
+    "@types/express-validator": "^3.0.2",
+    "@types/glob": "^8.1.0",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^20.0.0",
+    "rollup": "^4.34.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-delete": "^2.1.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.0.4"
+  }
+}
