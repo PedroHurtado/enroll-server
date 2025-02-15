@@ -3,8 +3,7 @@ import { Express, Request, Response } from "express";
 import { Logger } from "pino";
 
 export default function getRoles(app:Express, logger: Logger){
-
-    app.use(context())
+    
 
     const path = '/tenant/roles/:userId'
 
@@ -30,5 +29,5 @@ export default function getRoles(app:Express, logger: Logger){
         res.json(result)
     }
 
-    app.get(path, controller)
+    app.get(path, context(), controller)
 }

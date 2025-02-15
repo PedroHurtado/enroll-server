@@ -1,11 +1,8 @@
 import { Express, Request, Response } from 'express';
 import { Logger } from 'pino'
 import {
-    validate,
-    authorize,
     Log,
     Connection,      
-    getRequestHeaders,
     context
 } from '@enroll-server/common'
 
@@ -15,9 +12,9 @@ import { IOtp } from '../../../domain/otp/otp';
 import { setOtp } from '../../../infraestructure/otp/otpsession';
 import { getRoles } from 'packages/login/src/infraestructure/user/getroles';
 
-export default function create(app: Express, logger: Logger) {
+export default function login(app: Express, logger: Logger) {
     
-    app.use(context())
+    
     interface IRequest {
         emailOrPhone: string,
         tenantId?: string
@@ -60,6 +57,6 @@ export default function create(app: Express, logger: Logger) {
         res.json(response)
     }
 
-    app.post(path, authorize(), validate(validators), controller);
+    app.post(path, context(), controller);
 
 }
