@@ -6,6 +6,5 @@ export interface Roles{
 }
 export async function getRoles(userId:string){
     const url = `${config.tenant}/tenant/roles/${userId}` 
-    const result = await Http.get<Roles>(url)
-    return result
+    return await Http.get<Roles>(url)    
 }
