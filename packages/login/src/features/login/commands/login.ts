@@ -11,6 +11,7 @@ import { OTPGenerator } from '../../../domain/otp/otpservice';
 import { IOtp } from '../../../domain/otp/otp';
 import { setOtp } from '../../../infraestructure/otp/otpsession';
 import { getRoles } from 'packages/login/src/infraestructure/user/getroles';
+import { sendMessages } from '../../../infraestructure/messages/sendmessage';
 
 export default function login(app: Express, logger: Logger) {
     
@@ -32,15 +33,23 @@ export default function login(app: Express, logger: Logger) {
         @Log<IResponse>(logger)
         static async handler(request: IRequest): Promise<IResponse> {
             const result = OTPGenerator.generateOTP()
+            
             const {roles} = await getRoles(request.emailOrPhone)
+            
             const otp: IOtp = {
                 id: crypto.randomUUID(),
                 tenantId: request.tenantId,
                 emailOrPhone: request.emailOrPhone,
                 roles,
                 ...result
-            }
+            }            
             setOtp(otp)
+            
+            await sendMessages({
+                emailOrPhone:request.emailOrPhone,
+                otp:otp.otp
+            });
+
             return {
                 id: otp.id               
             }

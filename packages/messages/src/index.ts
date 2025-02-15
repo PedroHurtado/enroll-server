@@ -28,17 +28,9 @@ const app = express();
     app.use(httpLogger);
     app.use(tenat(redis))
     app.use(context())
-
+    
     await registerFeatures(app, logger, import.meta.url)
-    await registerKongEntities(
-      config.name,
-      config.domains,
-      config.bakend,
-      [
-        { name: 'route-root', path: '/', methods: ['GET'] },
-        { name: 'route-login', path: '/login', methods: ['POST'] },
-      ]
-    );
+
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
     });

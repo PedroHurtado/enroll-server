@@ -6,6 +6,7 @@ const dev = {
     bakend:'http://host.docker.internal:3000',
     domains:['*.enroll.com'],
     tenant:'http://localhost:3001',
+    messages:'http://localhost:3002',
     ...config    
 }
 
