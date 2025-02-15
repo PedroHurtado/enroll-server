@@ -7,6 +7,7 @@ import {
   tenat,
   redis,
   context,
+  health,
   
 } from '@enroll-server/common'
 import { config } from './config';
@@ -41,6 +42,7 @@ const app = express();
         { name: 'route-roles', path: '~/tenant/roles/[^/]+$', methods: ['GET'] }                       
       ]
     );
+    health(app)
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
     });

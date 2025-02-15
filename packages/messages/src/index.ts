@@ -7,6 +7,7 @@ import {
   tenat,
   redis,
   context,
+  health,
 } from '@enroll-server/common'
 import { config } from './config';
 
@@ -30,7 +31,7 @@ const app = express();
     app.use(context())
     
     await registerFeatures(app, logger, import.meta.url)
-
+    health(app)
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
     });
