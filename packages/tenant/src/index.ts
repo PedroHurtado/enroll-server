@@ -26,6 +26,8 @@ const app = express();
   try {
     const { httpLogger, logger } = loggerApp(config.elastic, config.name);   
     
+    health(app)
+
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(httpLogger);
@@ -41,8 +43,7 @@ const app = express();
       [
         { name: 'route-roles', path: '~/tenant/roles/[^/]+$', methods: ['GET'] }                       
       ]
-    );
-    health(app)
+    );    
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
     });
