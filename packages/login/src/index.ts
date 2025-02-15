@@ -24,6 +24,8 @@ const app = express();
   try {
     const { httpLogger, logger } = loggerApp(config.elastic, config.name);
     
+    health(app)  
+    
     app.use(cors(corsOptions));
     app.use(express.json());
     app.use(httpLogger);
@@ -39,7 +41,7 @@ const app = express();
         { name: 'route-login', path: '/login', methods: ['POST'] },
       ]
     );  
-    health(app)  
+    
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
     });
