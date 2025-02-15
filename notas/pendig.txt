@@ -1,0 +1,5 @@
+1. Implementación de circuit breaker
+2. Resolver renovación de jwt interno
+3. Implementar JWT
+4. Implementar confirm, refresh y logout en login service
+5. Implementar messaging service 
