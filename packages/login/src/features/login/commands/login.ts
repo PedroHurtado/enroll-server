@@ -3,7 +3,9 @@ import { Logger } from 'pino'
 import {
     Log,
     Connection,      
-    context
+    context,
+    authorize,
+    validate
 } from '@enroll-server/common'
 
 import { ContextRunner } from 'express-validator';
@@ -66,6 +68,6 @@ export default function login(app: Express, logger: Logger) {
         res.json(response)
     }
 
-    app.post(path, context(), controller);
+    app.post(path, authorize(), validate(validators), context(), controller);
 
 }
