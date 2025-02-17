@@ -3,7 +3,17 @@ const mongoURI = 'mongodb://root:example@localhost:27017/nueva_bd?authSource=adm
 
 
 async function connect() {
-    const connection = await mongoose.connect(mongoURI);
+    try{
+        const connection = await mongoose.connect(mongoURI);
+        //ejecutas la funcion
+    }
+    catch(ex){
+
+    }
+    finally{
+        await connection.disconnect();        
+    }
+    
     /*const id =crypto.randomUUID()
     await login.create({id: id, name: 'pedrohurt@gmail.com'});
     const doc = await login.findById(id,
