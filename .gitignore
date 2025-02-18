@@ -31,3 +31,6 @@ out/
 !.vscode/launch.json
 .idea/
 .DS_Store
+
+# Docker compose desarrollo
+docker-compose-dev.yaml
