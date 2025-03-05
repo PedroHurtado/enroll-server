@@ -2,6 +2,7 @@
 tsconfig.tsbuildinfo
 # Ignorar node_modules en todos los paquetes y en la raíz
 node_modules/
+run/
 .rollup.cache/
 
 # Ignorar la carpeta de datos de MongoDB
