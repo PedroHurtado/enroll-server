@@ -1,6 +1,9 @@
 import fs from 'fs'
 import path from 'path';
-const secretsDir = '/run/secrets';
+const secretsDir = process.argv.includes("--prod") ? 
+     '/run/secrets' :
+     `${process.cwd()}/run/secrets`;
+
 const privateKeyPath = path.join(secretsDir, 'private.pem');
 const publicKeyPath = path.join(secretsDir, 'public.pem');
 

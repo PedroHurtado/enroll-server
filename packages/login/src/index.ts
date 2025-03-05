@@ -5,9 +5,9 @@ import {
   registerKongEntities,
   loggerApp,
   tenat,
-  redis,
-  context,
+  redis,  
   health,
+  getKeys,
 } from '@enroll-server/common'
 import { config } from './config';
 
@@ -25,6 +25,11 @@ const app = express();
     const { httpLogger, logger } = loggerApp(config.elastic, config.name);
     
     health(app)  
+
+    app.get('/auth/public-key', (req, res) => {
+      const {publicKey} = getKeys()
+      res.type('text/plain').send(publicKey);
+    });
     
     app.use(cors(corsOptions));
     app.use(express.json());
